@@ -1,9 +1,7 @@
 [submodule "mcp-generator"]
 	path = mcp-generator
 	url = https://github.com/pragun-clique-labs/mcp-generator.git
-[submodule "observee-api"]
-	path = observee-api
-	url = https://github.com/pragun-clique-labs/observee-api.git
+
 [submodule "mcp-executor"]
 	path = mcp-executor
 	url = https://github.com/pragun-clique-labs/mcp-executor.git
