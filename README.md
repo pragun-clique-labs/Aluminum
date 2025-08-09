@@ -1,4 +1,4 @@
-# Aluminum PaaS
+# Aluminum
 
 A Railway-like Platform as a Service for deploying AI Agents and MCP (Model Control Protocol) servers with built-in observability.
 
