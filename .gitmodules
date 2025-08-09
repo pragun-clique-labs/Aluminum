@@ -4,3 +4,6 @@
 [submodule "observee-api"]
 	path = observee-api
 	url = https://github.com/pragun-clique-labs/observee-api.git
+[submodule "mcp-executor"]
+	path = mcp-executor
+	url = /tmp/mcp-executor-remote.git
