@@ -1,0 +1,24 @@
+{
+  "name": "aluminum-paas",
+  "version": "1.0.0",
+  "description": "Railway-like PaaS for Agent/MCP Deployment",
+  "main": "index.js",
+  "scripts": {
+    "dev:frontend": "cd frontend && npm start",
+    "dev:backend": "cd backend && npm run dev",
+    "dev": "concurrently \"npm run dev:backend\" \"npm run dev:frontend\"",
+    "install:all": "npm install && cd frontend && npm install && cd ../backend && npm install",
+    "build": "cd frontend && npm run build",
+    "start": "cd backend && npm start"
+  },
+  "devDependencies": {
+    "concurrently": "^8.2.0"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/your-username/aluminum-paas.git"
+  },
+  "keywords": ["paas", "ai-agents", "mcp", "deployment", "observability"],
+  "author": "Punit Vats",
+  "license": "MIT"
+}
