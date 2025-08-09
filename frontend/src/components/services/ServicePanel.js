@@ -5,15 +5,12 @@ import {
   Activity, 
   Variable, 
   Gauge,
-  Play,
   Pause,
   RefreshCw,
   Trash2,
-  Link,
   Shield,
   Database,
   Clock,
-  AlertCircle,
   Rocket,
   CheckCircle
 } from 'lucide-react';
@@ -28,31 +25,27 @@ const ServicePanel = ({ service, onClose, onServiceUpdate }) => {
   const [deploying, setDeploying] = useState(false);
   
   useEffect(() => {
-    if (service?.id) {
-      loadServiceData();
-    } else {
-      // For new services without ID, use default config
-      setServiceData(getDefaultServiceConfig(service.serviceType));
-      setMetrics(apiClient.getMockServiceMetrics(service.serviceType));
-      setLoading(false);
-    }
+    const loadServiceData = async () => {
+      try {
+        setLoading(true);
+        if (service?.id) {
+          const data = await apiClient.getService(service.id);
+          setServiceData(data.service);
+          setMetrics(apiClient.getMockServiceMetrics(service.serviceType));
+        } else {
+          setServiceData(getDefaultServiceConfig(service.serviceType));
+          setMetrics(apiClient.getMockServiceMetrics(service.serviceType));
+        }
+      } catch (error) {
+        console.error('Failed to load service data:', error);
+        setServiceData(getDefaultServiceConfig(service.serviceType));
+        setMetrics(apiClient.getMockServiceMetrics(service.serviceType));
+      } finally {
+        setLoading(false);
+      }
+    };
+    loadServiceData();
   }, [service]);
-
-  const loadServiceData = async () => {
-    try {
-      setLoading(true);
-      const data = await apiClient.getService(service.id);
-      setServiceData(data.service);
-      setMetrics(apiClient.getMockServiceMetrics(service.serviceType));
-    } catch (error) {
-      console.error('Failed to load service data:', error);
-      // Fallback to default config
-      setServiceData(getDefaultServiceConfig(service.serviceType));
-      setMetrics(apiClient.getMockServiceMetrics(service.serviceType));
-    } finally {
-      setLoading(false);
-    }
-  };
 
   const handleDeploy = async () => {
     setDeploying(true);

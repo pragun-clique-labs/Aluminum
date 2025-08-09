@@ -13,12 +13,10 @@ import {
   Plus,
   Settings,
   GitBranch,
-  Database,
   Globe,
   MessageSquare,
   Package,
   Rocket,
-  Eye,
   Activity,
   Clock,
   User,
@@ -248,7 +246,7 @@ const ServiceCanvas = () => {
         <div className="flex items-center justify-between h-14 px-6">
           <div className="flex items-center space-x-4">
             <button 
-              onClick={() => navigate(`/project/${projectName}/canvas`)}
+              onClick={() => navigate('/dashboard')}
               className="text-muted-foreground hover:text-foreground transition-colors"
             >
               <ArrowLeft className="h-5 w-5" />

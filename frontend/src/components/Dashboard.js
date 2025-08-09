@@ -10,12 +10,15 @@ import {
   Package,
   GitBranch,
   MessageSquare,
-  Shield
+  Shield,
+  Trash2
 } from 'lucide-react';
+import toast from 'react-hot-toast';
 
 const Dashboard = () => {
   const navigate = useNavigate();
   const [projects, setProjects] = useState([]);
+  const [showDeleteDialog, setShowDeleteDialog] = useState(null);
 
   useEffect(() => {
     // Load projects from localStorage
@@ -119,7 +122,7 @@ const Dashboard = () => {
                 <div
                   key={project.id}
                   className="bg-card border border-border rounded-lg hover:border-primary/50 transition-all hover:shadow-md cursor-pointer min-h-[280px] flex flex-col"
-                  onClick={() => navigate(`/project/${project.name}/canvas`)}
+                  onClick={() => navigate(`/project/${project.name}/services/canvas`)}
                 >
                   <div className="p-6 flex-1 flex flex-col">
                     {/* Project Header */}
@@ -128,15 +131,18 @@ const Dashboard = () => {
                         <h3 className="text-lg font-medium text-foreground truncate">{project.displayName}</h3>
                         <p className="text-xs text-muted-foreground truncate">{project.description}</p>
                       </div>
-                      <button 
-                        className="text-muted-foreground hover:text-foreground flex-shrink-0 ml-2"
-                        onClick={(e) => {
-                          e.stopPropagation();
-                          // Handle menu
-                        }}
-                      >
-                        <MoreVertical className="h-4 w-4" />
-                      </button>
+                      <div className="relative">
+                        <button 
+                          className="text-muted-foreground hover:text-red-500 flex-shrink-0 ml-2 transition-colors"
+                          onClick={(e) => {
+                            e.stopPropagation();
+                            setShowDeleteDialog(project.id);
+                          }}
+                          title="Delete project"
+                        >
+                          <Trash2 className="h-4 w-4" />
+                        </button>
+                      </div>
                     </div>
 
                     {/* Services */}
@@ -245,6 +251,39 @@ const Dashboard = () => {
           </div>
         </div>
       </div>
+
+      {/* Delete Confirmation Dialog */}
+      {showDeleteDialog && (
+        <div className="fixed inset-0 bg-black/50 flex items-center justify-center z-50">
+          <div className="bg-card border border-border rounded-lg p-6 max-w-md mx-4">
+            <h3 className="text-lg font-medium text-foreground mb-2">Delete Project</h3>
+            <p className="text-sm text-muted-foreground mb-4">
+              Are you sure you want to delete this project? This action cannot be undone and will remove all associated services.
+            </p>
+            <div className="flex space-x-3">
+              <button
+                onClick={() => setShowDeleteDialog(null)}
+                className="flex-1 px-4 py-2 text-sm bg-muted text-foreground rounded-md hover:bg-muted/80 transition-colors"
+              >
+                Cancel
+              </button>
+              <button
+                onClick={() => {
+                  const savedProjects = JSON.parse(localStorage.getItem('aluminumProjects') || '[]');
+                  const updatedProjects = savedProjects.filter(p => p.name !== showDeleteDialog);
+                  localStorage.setItem('aluminumProjects', JSON.stringify(updatedProjects));
+                  setProjects(prev => prev.filter(p => p.id !== showDeleteDialog));
+                  setShowDeleteDialog(null);
+                  toast.success('Project deleted successfully');
+                }}
+                className="flex-1 px-4 py-2 text-sm bg-red-500 text-white rounded-md hover:bg-red-600 transition-colors"
+              >
+                Delete
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
     </div>
   );
 };

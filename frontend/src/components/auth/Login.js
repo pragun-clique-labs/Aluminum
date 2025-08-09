@@ -1,28 +1,40 @@
 import React, { useState } from 'react';
+import { useNavigate } from 'react-router-dom';
 import { User, Lock, LogIn } from 'lucide-react';
 import toast from 'react-hot-toast';
+import { supabase } from '../../lib/supabaseClient';
 
-const Login = ({ onLogin }) => {
-  const [credentials, setCredentials] = useState({
-    email: '',
-    password: ''
-  });
+const Login = () => {
+  const navigate = useNavigate();
+  const [mode, setMode] = useState('signin'); // 'signin' | 'signup'
+  const [credentials, setCredentials] = useState({ email: '', password: '' });
   const [isLoading, setIsLoading] = useState(false);
 
   const handleSubmit = async (e) => {
     e.preventDefault();
     setIsLoading(true);
-    
+
     try {
-      // For demo purposes, accept any email/password
-      if (credentials.email && credentials.password) {
-        toast.success('Login successful!');
-        onLogin();
+      if (mode === 'signup') {
+        const { error } = await supabase.auth.signUp({
+          email: credentials.email,
+          password: credentials.password,
+        });
+        if (error) throw error;
+        toast.success('Sign up successful. Check your email to confirm.');
       } else {
-        toast.error('Please enter email and password');
+        const { data, error } = await supabase.auth.signInWithPassword({
+          email: credentials.email,
+          password: credentials.password,
+        });
+        if (error) throw error;
+        if (data.session) {
+          toast.success('Signed in');
+          navigate('/dashboard');
+        }
       }
     } catch (error) {
-      toast.error('Login failed');
+      toast.error(error.message || 'Auth failed');
     } finally {
       setIsLoading(false);
     }
@@ -32,7 +44,12 @@ const Login = ({ onLogin }) => {
     <div className="min-h-screen flex items-center justify-center bg-background">
       <div className="max-w-md w-full space-y-8 p-8 bg-card rounded-xl shadow-lg border">
         <div className="text-center">
-          <h2 className="text-3xl font-medium text-card-foreground">aluminum paas</h2>
+          <img 
+            src="/logo/GGEmoji_Steel_1500x1500-1100x1100.webp" 
+            alt="Aluminum Logo" 
+            className="mx-auto h-20 w-20 mb-4"
+          />
+          <h1 className="text-4xl sm:text-5xl font-normal text-foreground no-lowercase">Aluminum</h1>
           <p className="mt-2 text-sm font-normal text-muted-foreground">
             deploy ai agents & mcp servers with ease
           </p>
@@ -81,15 +98,25 @@ const Login = ({ onLogin }) => {
             ) : (
               <>
                 <LogIn className="mr-2 h-4 w-4" />
-                sign in
+                {mode === 'signup' ? 'sign up' : 'sign in'}
               </>
             )}
           </button>
+
+          <div className="text-center text-sm text-muted-foreground">
+            {mode === 'signin' ? (
+              <button type="button" onClick={() => setMode('signup')} className="underline">
+                create an account
+              </button>
+            ) : (
+              <button type="button" onClick={() => setMode('signin')} className="underline">
+                already have an account? sign in
+              </button>
+            )}
+          </div>
         </form>
         
-        <div className="text-center text-sm text-muted-foreground">
-          demo: use any email and password to login
-        </div>
+        
       </div>
     </div>
   );
